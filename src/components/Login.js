@@ -1,27 +1,75 @@
-import React, { useEffect } from "react";
+import axios from 'axios';
+import React, { useState } from 'react';
 
-const Login = () => {
-  // make a post request to retrieve a token from the api
-  // when you have handled the token, navigate to the BubblePage route
+const initialCredentials = {
+	username: 'Lambda School',
+	password: 'i<3Lambd4'
+};
 
-  useEffect(()=>{
-    // make a post request to retrieve a token from the api
-    // when you have handled the token, navigate to the BubblePage route
-  });
-  
-  const error = "";
-  //replace with error state
+const Login = props => {
+	const [credentials, setCredentials] = useState(initialCredentials);
+	const [error, setError] = useState('');
 
-  return (
-    <div>
-      <h1>Welcome to the Bubble App!</h1>
-      <div data-testid="loginForm" className="login-form">
-        <h2>Build login form here</h2>
-      </div>
+	const handleLoginUpdate = e => {
+		setCredentials({
+			...credentials,
+			[e.target.name]: e.target.value
+		});
+	};
 
-      <p data-testid="errorMessage" className="error">{error}</p>
-    </div>
-  );
+	// make a post request to retrieve a token from the api
+	// when you have handled the token, navigate to the BubblePage route
+	const handleSubmit = e => {
+		e.preventDefault();
+		axios
+			.post('http://localhost:5000/api/login', credentials)
+			.then(res => {
+				setCredentials(initialCredentials);
+				setError('');
+				window.localStorage.setItem('token', res.data.payload);
+				props.history.push('/bubble-page');
+			})
+			.catch(err => {
+				console.log(err);
+				setError('Username or Password is incorrect');
+			});
+	};
+
+	return (
+		<div>
+			<h1>Welcome to the Bubble App!</h1>
+			<div data-testid="loginForm" className="login-form">
+				<h2>Build login form here</h2>
+				<form onClick={handleSubmit}>
+					<label>
+						<input
+							type="text"
+							name="username"
+							data-testid="username"
+							onChange={handleLoginUpdate}
+							value={credentials.username}
+							placeholder="Username"
+						/>
+					</label>
+					<label>
+						<input
+							type="password"
+							name="password"
+							data-testid="password"
+							onChange={handleLoginUpdate}
+							value={credentials.password}
+							placeholder="Password"
+						/>
+					</label>
+					<button data-testid="loginBtn">Login</button>
+				</form>
+			</div>
+
+			<p data-testid="errorMessage" className="error">
+				{error}
+			</p>
+		</div>
+	);
 };
 
 export default Login;
