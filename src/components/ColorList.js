@@ -18,12 +18,15 @@ const ColorList = ({ colors, updateColors }) => {
 		setColorToEdit(color);
 	};
 
+	console.log('color to edit: ', colorToEdit);
+
 	const saveEdit = e => {
 		e.preventDefault();
 		axiosWithAuth()
-			.put(`http://localhost:5000/api/colors/:id`, colorToEdit)
+			.put(`http://localhost:5000/api/colors/:${colorToEdit.id}`, colorToEdit)
 			.then(res => {
 				console.log('save edit', res);
+				updateColors(colors.map(item => (item.id === colorToEdit.id ? colorToEdit : item)));
 				setColorToEdit(initialColor);
 				setEditing(false);
 			})
@@ -32,29 +35,16 @@ const ColorList = ({ colors, updateColors }) => {
 			});
 	};
 
-	let NewList = [];
-
 	const deleteColor = color => {
-		console.log('getting in: ', color);
 		axiosWithAuth()
 			.delete(`http://localhost:5000/api/colors/${color.id}`)
 			.then(res => {
-				NewList = colors.filter((color, i) => {
-					console.log(`res.data:${res.data}, current color: ${color.color} ${color.id} @${i}`);
-					// console.log('delete res', res.data);
-					// console.log(color);
-					return res.data !== color.id;
-				});
-				console.log('NewList (inside): ', NewList);
-				updateColors(NewList);
+				updateColors(colors.filter(item => item.id !== color.id));
 			})
 			.catch(err => {
 				console.log(err);
 			});
 	};
-
-	console.log('NewList (outside): ', NewList);
-	console.log('Color List (Color List page): ', colors);
 
 	return (
 		<div className="colors-wrap">
@@ -66,7 +56,7 @@ const ColorList = ({ colors, updateColors }) => {
 						editing={editing}
 						color={color}
 						editColor={editColor}
-						deleteColor={() => deleteColor(color)}
+						deleteColor={deleteColor}
 					/>
 				))}
 			</ul>
