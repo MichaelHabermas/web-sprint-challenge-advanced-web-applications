@@ -18,14 +18,11 @@ const ColorList = ({ colors, updateColors }) => {
 		setColorToEdit(color);
 	};
 
-	console.log('color to edit: ', colorToEdit);
-
 	const saveEdit = e => {
 		e.preventDefault();
 		axiosWithAuth()
 			.put(`http://localhost:5000/api/colors/:${colorToEdit.id}`, colorToEdit)
 			.then(res => {
-				console.log('save edit', res);
 				updateColors(colors.map(item => (item.id === colorToEdit.id ? colorToEdit : item)));
 				setColorToEdit(initialColor);
 				setEditing(false);

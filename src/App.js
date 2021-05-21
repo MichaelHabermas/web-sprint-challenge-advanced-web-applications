@@ -6,6 +6,8 @@ import BubblePage from './components/BubblePage';
 import PrivateRoute from './components/PrivateRoute';
 import './styles.scss';
 
+import fetchColors from './api/FetchColors';
+
 // import { axiosWithAuth } from './helpers/axiosWithAuth.js';
 
 function App(props) {
@@ -27,6 +29,9 @@ function App(props) {
 				<Switch>
 					<Route exact path="/" component={Login} />
 					<PrivateRoute exact path="/bubble-page" component={BubblePage} />
+					{/* <PrivateRoute exact path="/bubble-page">
+						<BubblePage fetchColors={fetchColors} />
+					</PrivateRoute> */}
 				</Switch>
 			</div>
 		</Router>
